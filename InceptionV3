@@ -444,7 +444,6 @@ our_labels = {
     'Breastplate':                     ['n02895154'],
     'Stretcher':                       ['n04336792'],
 }
-import os
 if __name__ == '__main__':
     model = InceptionV3(include_top=True, weights='imagenet')#, classes=len(our_labels))
 
