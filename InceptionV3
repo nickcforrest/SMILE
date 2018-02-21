@@ -1,4 +1,5 @@
 
+# -*- coding: utf-8 -*-
 """Inception V3 model for Keras.
 Note that the input image format for this model is different than for
 the VGG16 and ResNet models (299x299 instead of 224x224),
@@ -402,47 +403,46 @@ def InceptionV3(include_top=True,
 # print('Predicted:', decode_predictions(preds))
 
 our_labels = {
-    'Revolver   ':	                    ['n04086273'],
+    'Revolver   ':                     ['n04086273'],
     'Warplane - military plane':        ['n04552348'],
-    'Airship':	                        ['n02692877'],
-    'Pirate – pirate ship':	            ['n03947888'],
-    'Aircraft carrier':	                ['n02687172'],
-    'Submarine':	                    ['n04347754'],
-    'Half-track':	                    ['n03478589'],
-    'Tank':	                            ['n04389033'],
-    'Missile':	                        ['n03773504'],
-    'Hatchet':	                        ['n03498962'],
-    'Cleaver':	                        ['n03041632'],
-    'Guillotine':	                    ['n03467068'],
-    'Bow':	                            ['n02879718'],
-    'Cannon':	                        ['n02950826'],
-    'Assault rifle':	                ['n02749479'],
-    'Rifle':	                        ['n04090263'],
-    'Projectile – missile':	            ['n04008634'],
-    'Muzzle':	                        ['n03803284'],
-    'Prison':	                        ['n04005630'],
-    'Mortar':	                        ['n03786901'],
-    'Bulletproof vest':	                ['n02916936'],
-    'Military uniform':	                ['n03763968'],
-    'Gasmask':	                        ['n03424325'],
-    'Space Shuttle':	                ['n04266014'],
-    'Fireboat':	                        ['n03344393'],
-    'Container ship':	                ['n03095699'],
-    'Wreck':	                        ['n04606251'],
-    'Amphibian - Amphibious vehicle':	['n02704792'],
-    'Ambulance':	                    ['n02701002'],
-    'Fire Engine':	                    ['n03345487'],
-    'Police Van':	                    ['n03977966'],
-    'Chainsaw':	                        ['n03000684'],
-    'Wing':	                            ['n04592741'],
-    'Castle':	                        ['n02980441'],
-    'Ski Mask':	                        ['n04229816'],
-    'Holster':	                        ['n03527444'],
-    'Scabbard':	                        ['n04141327'],
-    'Chain Mail':	                    ['n03000247'],
-    'Breastplate':	                    ['n02895154'],
-    'Stretcher':	                    ['n04336792'],
-
+    'Airship':                         ['n02692877'],
+    'Pirate – pirate ship':                ['n03947888'],
+    'Aircraft carrier':                    ['n02687172'],
+    'Submarine':                       ['n04347754'],
+    'Half-track':                      ['n03478589'],
+    'Tank':                                ['n04389033'],
+    'Missile':                         ['n03773504'],
+    'Hatchet':                         ['n03498962'],
+    'Cleaver':                         ['n03041632'],
+    'Guillotine':                      ['n03467068'],
+    'Bow':                             ['n02879718'],
+    'Cannon':                          ['n02950826'],
+    'Assault rifle':                   ['n02749479'],
+    'Rifle':                           ['n04090263'],
+    'Projectile – missile':                ['n04008634'],
+    'Muzzle':                          ['n03803284'],
+    'Prison':                          ['n04005630'],
+    'Mortar':                          ['n03786901'],
+    'Bulletproof vest':                    ['n02916936'],
+    'Military uniform':                    ['n03763968'],
+    'Gasmask':                         ['n03424325'],
+    'Space Shuttle':                   ['n04266014'],
+    'Fireboat':                            ['n03344393'],
+    'Container ship':                  ['n03095699'],
+    'Wreck':                           ['n04606251'],
+    'Amphibian - Amphibious vehicle':  ['n02704792'],
+    'Ambulance':                       ['n02701002'],
+    'Fire Engine':                     ['n03345487'],
+    'Police Van':                      ['n03977966'],
+    'Chainsaw':                            ['n03000684'],
+    'Wing':                                ['n04592741'],
+    'Castle':                          ['n02980441'],
+    'Ski Mask':                            ['n04229816'],
+    'Holster':                         ['n03527444'],
+    'Scabbard':                            ['n04141327'],
+    'Chain Mail':                      ['n03000247'],
+    'Breastplate':                     ['n02895154'],
+    'Stretcher':                       ['n04336792'],
 }
 import os
 if __name__ == '__main__':
@@ -452,6 +452,9 @@ if __name__ == '__main__':
     #ILSVRC2012_val_00018213.JPEG # military with gun
     #ILSVRC2012_val_00018181.JPEG # guns
     #ILSVRC2012_val_00006963.JPEG # wig
+    #MEuniform.JPEG
+    #Morrow_Image.JPEG
+    #Claire_Rifle.JPEG
 
     imgs = os.listdir(img_dir_path)
     print(len(imgs))
@@ -460,7 +463,7 @@ if __name__ == '__main__':
 
     #perm = np.random.permutation(np.arange(len(imgs)))
     #print(perm[:10])
-    imgs = ['ILSVRC2012_val_00018181.JPEG', 'ILSVRC2012_val_00018213.JPEG','ILSVRC2012_val_00006963.JPEG']
+    imgs = ['ILSVRC2012_val_00018181.JPEG','ILSVRC2012_val_00006963.JPEG','MEuniform.JPEG','Morrow_Image.JPEG']
 
 
     for img_fn in imgs[:5]:# for i in perm:
@@ -492,10 +495,13 @@ if __name__ == '__main__':
         top5 = decode_predictions(preds)
 
 
-        top5Labels = [pred[1] for pred in top5[0]]
+        top5Label = [pred[1] for pred in top5[0]]
+        #top5LabelThreats = [pred[1] for pred in classes]
         if top5[0][0][0] in classes:
-            print('Predicted: {}\n'.format(', '.join(top5Labels)))#top5[0][0][1])
+            print('POSSIBLE THREAT! Image may include the following: {}\n'.format(', '.join((top5Label))))
         else:
-            print('Predicted:', 'OTHER ({})\n'.format(', '.join(top5Labels)))
+            print('NO SUSPECTED THREAT ... Image may include the following: {}\n'.format(', '.join(top5Label)) + ' and other irrelevant characters')
+
+
 
 
