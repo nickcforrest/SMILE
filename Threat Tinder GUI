@@ -1,0 +1,81 @@
+from itertools import tee
+import tkinter as tk
+from tkinter.filedialog import *
+from PIL import Image, ImageTk
+
+class Application(tk.Frame):
+    def __init__(self, master=None, dir=''):
+        super().__init__(master)
+
+        self.imageFolder = dir
+        self.labels = {}
+        self.files = []
+        listOfFiles = os.listdir(self.imageFolder)
+        pattern = "*.JPEG"
+        maxw = 1080
+        maxh = 768
+        self.imageGen, temp = tee((os.path.join(self.imageFolder, entry) for entry in listOfFiles
+                                   if fnmatch.fnmatch(entry, pattern)))
+        # for file in temp:
+        #     img = Image.open(file)
+        #     w, h = img.size
+        #     maxw = max(maxw, w)
+        #     maxh = max(maxh, h)
+
+        self.maxSize = (maxw, maxh)
+        self.create_widgets()
+        self.pack()
+        self.update_idletasks()
+
+        self.bind('<Left>', self.swipeLeft)
+        self.bind('<Right>', self.swipeRight)
+
+    def create_widgets(self):
+        self.canvas = tk.Canvas(self)
+        self.canvas['width'] = self.maxSize[0]
+        self.canvas['height'] = self.maxSize[1]
+
+        self.canvas.pack(side="top")
+
+        self.leftButton = tk.Button(self, text="<", command=self.swipeLeft)
+        self.leftButton.pack(side="left", fill=Y)
+
+        self.rightButton = tk.Button(self, text=">", command=self.swipeRight)
+        self.rightButton.pack(side="right", fill=Y)
+        self.quit = tk.Button(self, text="QUIT", fg="red",
+                              command=root.destroy)
+        self.quit.pack(side="bottom")
+
+    def loadNextImage(self):
+        try:
+            self.currentImage = next(self.imageGen)
+            img = Image.open(self.currentImage)
+            self.tkimage = ImageTk.PhotoImage(img)
+            self.canvas.create_image(self.maxSize[0] / 2, self.maxSize[1] / 2, im=self.tkimage)
+        except StopIteration:
+            self.canvas.delete('all')
+            self.canvas.create_text(self.maxSize[0] / 2, self.maxSize[1] / 2, text="No more pictures")
+            outFile = open(os.path.join(self.imageFolder, 'labels.txt'), 'w')
+            for key, value in self.labels.items():
+                outFile.write('{}\t{}\n'.format(key, value))
+            outFile.close()
+            self.unbind('<Left>')
+            self.unbind('<Right>')
+
+    def swipeLeft(self, event=None):
+        # Load the next image
+        self.labels[self.currentImage] = 'nothreat'
+        self.loadNextImage()
+
+    def swipeRight(self, event=None):
+        # Load the next image and right to file
+        self.labels[self.currentImage] = 'threat'
+        self.loadNextImage()
+
+root = tk.Tk()
+app = Application(master=root, dir='100_Threat_Val')
+#print(askdirectory(parent=root, initialdir='data', title='select data directory'))
+#app = Application(master=root, dir=askdirectory(parent=root, initialdir='data', title='select data directory'))
+app.focus_set()
+app.after(100, app.loadNextImage())
+app.mainloop()
