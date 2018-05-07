@@ -1,0 +1,18 @@
+infile = open('/home/hal/Desktop/NGA_SMILE/threatDictionary.txt', 'r')
+
+# probs = {label1 : {'threat' : int, 'nothreat' : int},
+#          label2 : {'threat' : int, 'nothreat' : int}}
+
+probs = {}
+for line in infile.readlines():
+    line = line.strip()
+    words = line.split('\t')
+    for word in words[2:]:
+        if not word in probs:
+            probs[word] = {'threat' : 0, 'nothreat' : 0}
+
+        probs[word][words[0]] += 1
+
+
+# P(threat | 'Loafer') = P('loafer'|Threat)P('loafer')
+# P('loafer'|T) = probs['loafer']['threat'] = 2
